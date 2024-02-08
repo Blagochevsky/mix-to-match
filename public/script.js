@@ -1,230 +1,150 @@
-document.addEventListener('DOMContentLoaded', function() {
-    setVH();
-    window.addEventListener('resize', setVH);
+document.addEventListener("DOMContentLoaded", function () {
+  document.body.style.opacity = "1";
 });
 
-function setVH() {
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-    document.body.style.opacity = "1";
-}
+const BASE_COLORS = {
+  red: [211, 31, 53],
+  blue: [44, 52, 128],
+  yellow: [252, 215, 0],
+  white: [255, 255, 255],
+};
 
 document.addEventListener("DOMContentLoaded", function () {
-    function mixColorsWithMixbox() {
-        const targetColor = document.getElementById("targetColor");
-        const mixedColor = document.getElementById("mixedColor");
-        const colorButtons = document.querySelectorAll(".colors");
-        let selectedColors = []; // Store selected colors
-        const baseColors = {
-            red: [211, 31, 53],
-            blue: [44, 52, 128],
-            yellow: [252, 215, 0],
-            white: [255, 255, 255]
-        };
-        let colorCount = { red: 0, blue: 0, yellow: 0, white: 0 };
-        let hintColors = []; // Define hintColors in the function scope
-        let colorSelections = 0;
-        let partsNumber = 2; // Define partsNumber in the function scope
-        const colorDots = {
-            red: document.getElementById("redDot"),
-            blue: document.getElementById("blueDot"),
-            yellow: document.getElementById("yellowDot"),
-            white: document.getElementById("whiteDot")
-        };
+  let targetColorValue;
+  let currentColorValue;
+  let currentColors = [];
+  let currentLevel = 1;
 
-        // Initially hide the "Check" and "Reset" buttons
-        document.getElementById("check").style.display = 'none';
-        document.getElementById("reset").style.display = 'none';
+  const getColorPart = (colors, seed) => colors[Object.keys(colors).at(seed)];
 
-        document.getElementById("check").addEventListener("click", () => {
-            document.getElementById("overlay").style.display = 'block';
-        });
+  const rgbToString = (color) => `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
-        for (let color in colorDots) {
-            const rgbColor = baseColors[color];
-            colorDots[color].style.backgroundColor = `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`;
-            colorDots[color].style.display = 'none';
-        }
+  const mixColors = (colors) => {
+    const mix = Array.from({ length: colors.length }, (_, i) =>
+      mixbox.rgbToLatent(colors[i])
+    )
+      .reduce((acc, curr) => (!acc ? curr : acc.map((c, i) => c + curr[i])))
+      .map((c) => c / colors.length);
 
-        // colorButtons.forEach((button) => {
-        //     const color = button.dataset.color;
-        //     const rgbColor = baseColors[color];
-        //     button.style.backgroundColor = `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`;
-        //     button.style.color = 'white'; // Set the text color to white for better contrast
-        // });
+    return mixbox.latentToRgb(mix);
+  };
 
-        colorButtons.forEach((button) => {
-            button.addEventListener("click", function () {
-                const color = this.dataset.color;
-                selectedColors.push(baseColors[color]); // Store RGB arrays, not color names
-                mixSelectedColors();
-                colorCount[color]++;
-                colorDots[color].style.transform = `scale(${1 + (colorCount[color] / 2)})`; // Increase the size of the color dot
-                if (colorCount[color] === 0) {
-                    colorDots[color].style.display = 'none'; // Hide the color dot
-                } else {
-                    colorDots[color].style.display = 'block'; // Show the color dot
-                }
-                // updateButtonLabels();
-                colorSelections++;
-                checkCorrectMix(); // Check if the mix is correct
-                // Show the "Check" and "Reset" buttons when a color is added
-                document.getElementById("check").style.display = 'block';
-                document.getElementById("reset").style.display = 'block';
-            });
-        });
+  const createColor = (colors, partsCount) => {
+    const parts = Array.from({ length: partsCount }, () =>
+      getColorPart(
+        colors,
+        Math.floor(Math.random() * Object.keys(colors).length)
+      )
+    );
 
-        function checkCorrectMix() {
-            const targetColorStyle = window.getComputedStyle(targetColor);
-            const targetColorRgb = targetColorStyle.backgroundColor.match(/\d+/g).map(Number); // Extract RGB values
+    return mixColors(parts);
+  };
 
-            const mixedColorStyle = window.getComputedStyle(mixedColor);
-            const mixedColorRgb = mixedColorStyle.backgroundColor.match(/\d+/g).map(Number); // Extract RGB values
+  const checkDistance = (targetColor, mixedColor) => {
+    const distance = Math.sqrt(
+      Math.pow(targetColor[0] - mixedColor[0], 2) +
+        Math.pow(targetColor[1] - mixedColor[1], 2) +
+        Math.pow(targetColor[2] - mixedColor[2], 2)
+    );
+    const maxDistance = Math.sqrt(Math.pow(255, 2) * 3);
 
-            const distance = Math.sqrt(
-                Math.pow(targetColorRgb[0] - mixedColorRgb[0], 2) +
-                Math.pow(targetColorRgb[1] - mixedColorRgb[1], 2) +
-                Math.pow(targetColorRgb[2] - mixedColorRgb[2], 2)
-            );
+    return 100 - (distance / maxDistance) * 100;
+  };
 
-            const maxDistance = Math.sqrt(Math.pow(255, 2) * 3); // Maximum possible distance (black to white)
-
-            const closenessPercentage = 100 - (distance / maxDistance * 100);
-
-            const messageDiv = document.getElementById("message");
-            if (closenessPercentage >= 100) { // Adjusted threshold
-                messageDiv.textContent = 'Correct mix!';
-            } else if (closenessPercentage >= 99) {
-                messageDiv.textContent = `Almost! You are ${closenessPercentage.toFixed(2)}% close. Try again!`;
-            } else {
-                messageDiv.textContent = `Incorrect mix. You are ${closenessPercentage.toFixed(2)}% close. Try again!`;
-            }
-        }
-
-        function mixSelectedColors() {
-            let mixedLatent = new Array(mixbox.LATENT_SIZE).fill(0);
-            selectedColors.forEach((color) => {
-                const colorLatent = mixbox.rgbToLatent(color);
-                mixedLatent = mixedLatent.map(
-                    (c, i) => c + colorLatent[i] / selectedColors.length,
-                );
-            });
-            const mixedColorRgb = mixbox.latentToRgb(mixedLatent);
-            mixedColor.style.backgroundColor = `rgb(${mixedColorRgb[0]}, ${mixedColorRgb[1]}, ${mixedColorRgb[2]})`;
-        }
-
-        function resetGame() {
-            mixedColor.style.backgroundColor = "rgb(255, 255, 255)"; // Reset mixed color
-            selectedColors = []; // Clear selected colors
-            colorCount = { red: 0, blue: 0, yellow: 0, white: 0 }; // Reset counts
-            document.getElementById("message").textContent = ''; // Reset the message
-        
-            // Reset the scale and visibility of the color dots
-            for (let color in colorDots) {
-                colorDots[color].style.transform = 'scale(1)';
-                colorDots[color].style.display = 'none'; // Hide the color dot
-            }
-            document.getElementById("overlay").style.display = 'none'; // Hide the modal
-            // Hide the "Check" and "Reset" buttons when the colors are reset
-            document.getElementById("check").style.display = 'none';
-            document.getElementById("reset").style.display = 'none';
-        }
-        
-        document.getElementById("reset").addEventListener("click", resetGame);
-        document.getElementById("tryAgain").addEventListener("click", resetGame);
-
-        // function updateButtonLabels() {
-        //     colorButtons.forEach(button => {
-        //         const color = button.dataset.color;
-        //         const count = colorCount[color];
-        //         button.textContent = count > 0 ? `${capitalizeFirstLetter(color)} (${count})` : capitalizeFirstLetter(color);
-        //     });
-        // }
-
-        // function capitalizeFirstLetter(string) {
-        //     return string.charAt(0).toUpperCase() + string.slice(1);
-        // }
-
-        function createTargetColor() {
-            hintColors = []; // Reset hint colors for each new target
-            let targetColorLatent = new Array(mixbox.LATENT_SIZE).fill(0);
-
-            const colorKeys = Object.keys(baseColors);
-
-            for (let i = 0; i < partsNumber; i++) {
-                const colorName = colorKeys[Math.floor(Math.random() * colorKeys.length)]; // Select color randomly
-                const color = baseColors[colorName];
-                hintColors.push(colorName); // Save the color name for the hint
-                const colorLatent = mixbox.rgbToLatent(color);
-                targetColorLatent = targetColorLatent.map(
-                    (c, i) => c + colorLatent[i] / partsNumber,
-                );
-            }
-
-            const targetColorRgb = mixbox.latentToRgb(targetColorLatent);
-            targetColor.style.backgroundColor = `rgb(${targetColorRgb[0]}, ${targetColorRgb[1]}, ${targetColorRgb[2]})`;
-            document.getElementById("levelNumber").textContent =
-                `Level ${partsNumber - 1}`;
-        }
-
-        // document.getElementById("hintButton").addEventListener("click", () => {
-        //     const hintDisplay = document.getElementById("hintDisplay");
-        //     if (hintDisplay.textContent !== '') {
-        //         hintDisplay.textContent = '';
-        //     } else {
-        //         let hintMessage = 'Hint: The colors needed are ';
-        //         hintColors.forEach((colorName, index) => {
-        //             hintMessage += `${colorName}${index < hintColors.length - 1 ? ', ' : '.'}`;
-        //         });
-        //         hintDisplay.textContent = hintMessage;
-        //     }
-        // });
-
-        document.getElementById("nextColor").addEventListener("click", () => {
-            selectedColors = []; // Clear selected colors
-            colorCount = { red: 0, blue: 0, yellow: 0, white: 0 }; // Reset counts
-            mixedColor.style.backgroundColor = "rgb(255, 255, 255)"; // Reset mixed color
-            // updateButtonLabels(); // Update button labels
-            // document.getElementById("hintDisplay").textContent = ''; // Hide hint if it's visible
-            document.getElementById("message").textContent = ''; // Reset the message
-            partsNumber++; // Increment partsNumber
-            createTargetColor(); // Create a new target color
-
-            // Reset the scale and visibility of the color dots
-            for (let color in colorDots) {
-                colorDots[color].style.transform = 'scale(1)';
-                colorDots[color].style.display = 'none'; // Hide the color dot
-            }
-
-            document.getElementById("overlay").style.display = 'none'; // Hide the modal
-            // Hide the "Check" and "Reset" buttons when the colors are reset
-            document.getElementById("check").style.display = 'none';
-            document.getElementById("reset").style.display = 'none';
-        });
-
-        document.getElementById("changeColor").addEventListener("click", () => {
-            selectedColors = []; // Clear selected colors
-            colorCount = { red: 0, blue: 0, yellow: 0, white: 0 }; // Reset counts
-            mixedColor.style.backgroundColor = "rgb(255, 255, 255)"; // Reset mixed color
-            // updateButtonLabels(); // Update button labels
-            // document.getElementById("hintDisplay").textContent = ''; // Hide hint if it's visible
-            document.getElementById("message").textContent = ''; // Reset the message
-            createTargetColor(); // Create a new target color
-
-            // Reset the scale and visibility of the color dots
-            for (let color in colorDots) {
-                colorDots[color].style.transform = 'scale(1)';
-                colorDots[color].style.display = 'none'; // Hide the color dot
-            }
-
-            document.getElementById("overlay").style.display = 'none'; // Hide the modal
-            // Hide the "Check" and "Reset" buttons when the colors are reset
-            document.getElementById("check").style.display = 'none';
-            document.getElementById("reset").style.display = 'none';
-        });
-
-        createTargetColor(); // Create the initial target color
+  const getMessageByDistance = (closenessPercentage) => {
+    if (closenessPercentage >= 100) {
+      return "Correct mix!";
     }
 
-    mixColorsWithMixbox();
+    if (closenessPercentage >= 99) {
+      return `Almost! You are ${closenessPercentage.toFixed(
+        2
+      )}% close. Try again!`;
+    }
+
+    return `Incorrect mix. You are ${closenessPercentage.toFixed(
+      2
+    )}% close. Try again!`;
+  };
+
+  const addColor = (colors, color) => {
+    return [...colors, color];
+  };
+
+  const resetElements = () => {
+    currentColors = [];
+    currentColorValue = null;
+
+    resetcontainer.style.visibility = "hidden";
+
+    document.querySelectorAll("[data-color]").forEach((element) => {
+      window[`${element.dataset.color}Dot`].style.transform = "scale(0)";
+    });
+
+    mixedColor.style.backgroundColor = "white";
+  };
+
+  const newRound = (round) => {
+    resetElements();
+
+    levelNumber.textContent = `Level ${round}`;
+
+    targetColorValue = createColor(BASE_COLORS, round + 1);
+    targetColor.style.backgroundColor = rgbToString(targetColorValue);
+  };
+
+  const getElementScale = (element) => {
+    return element.style.transform.match(/scale\(([\d\.]+)\)/)?.at(1) ?? 1;
+  };
+
+  // LISTENERS
+
+  reset.addEventListener("click", resetElements);
+
+  check.addEventListener("click", () => {
+    if (currentColors.length === 0) return;
+
+    const closenessPercentage = checkDistance(
+      targetColorValue,
+      currentColorValue
+    );
+
+    nextColor.style.display = closenessPercentage >= 99 ? "inline" : "none";
+    message.textContent = getMessageByDistance(closenessPercentage);
+
+    dialog.showModal();
+  });
+
+  tryAgain.addEventListener("click", resetElements);
+
+  changeColor.addEventListener("click", () => {
+    newRound(currentLevel);
+  });
+
+  nextColor.addEventListener("click", () => {
+    newRound(++currentLevel);
+  });
+
+  document.querySelectorAll("[data-color]").forEach((element) =>
+    element.addEventListener("click", (event) => {
+      const color = event.target.dataset.color;
+      const $dot = window[`${color}Dot`];
+      const scale = getElementScale($dot);
+
+      $dot.style.transform = `scale(${Math.max(
+        1,
+        Math.min(10, scale * 1.25)
+      )})`;
+
+      currentColors = addColor(currentColors, BASE_COLORS[color]);
+
+      currentColorValue = mixColors(currentColors);
+      mixedColor.style.backgroundColor = rgbToString(currentColorValue);
+
+      resetcontainer.style.visibility =
+        currentColors.length > 0 ? "visible" : "hidden";
+    })
+  );
+
+  newRound(currentLevel);
 });
