@@ -178,7 +178,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!rgb) return;
 
-      element.previousElementSibling.style.backgroundColor = rgbToString(rgb);
+      element.previousElementSibling.firstElementChild.style.fill =
+        rgbToString(rgb);
     });
 
     return newRound(state);

@@ -29,6 +29,10 @@ p {
   margin-block-end: 0.6em;
 }
 
+svg {
+  overflow: visible;
+}
+
 #levelNumber {
   font-weight: 600;
 }
@@ -132,11 +136,8 @@ button {
 }
 
 .dots {
-  border-radius: 50%;
-  width: 10px;
-  height: 10px;
-  transform: scale(0);
   transition: transform 0.3s ease;
+  transform-origin: 50% 50%;
 }
 
 .colors {
@@ -230,10 +231,6 @@ form>button {
   background-image: url(bluetube.png);
 }
 
-/* #reset {
-    background-image: url(paletteknife.png);
-} */
-
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   #whitetube {
     background-image: url(whitetube@2x.png);
@@ -250,8 +247,4 @@ form>button {
   #bluetube {
     background-image: url(bluetube@2x.png);
   }
-
-  /* #reset {
-        background-image: url(paletteknife@2x.png);
-    } */
 }
