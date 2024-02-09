@@ -129,11 +129,11 @@ document.addEventListener("DOMContentLoaded", function () {
     element.addEventListener("click", (event) => {
       const color = event.target.dataset.color;
       const $dot = window[`${color}Dot`];
-      const scale = getElementScale($dot);
+      const scale = parseFloat(getElementScale($dot));
 
       $dot.style.transform = `scale(${Math.max(
         1,
-        Math.min(10, scale * 1.25)
+        Math.min(80, scale + 1)
       )})`;
 
       currentColors = addColor(currentColors, BASE_COLORS[color]);
