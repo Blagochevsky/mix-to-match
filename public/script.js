@@ -1,19 +1,18 @@
-document.addEventListener("DOMContentLoaded", function () {
-  document.body.style.opacity = "1";
-});
-
 const BASE_COLORS = {
   red: [211, 31, 53],
   blue: [44, 52, 128],
   yellow: [252, 215, 0],
   white: [255, 255, 255],
 };
+const MAXIMUM_DOT_SCALE = 80;
 
 document.addEventListener("DOMContentLoaded", function () {
-  let targetColorValue;
-  let currentColorValue;
-  let currentColors = [];
-  let currentLevel = 1;
+  let state = {
+    targetColor: null,
+    currentColor: null,
+    currentMixedColors: [],
+    currentLevel: 1,
+  };
 
   const getColorPart = (colors, seed) => colors[Object.keys(colors).at(seed)];
 
@@ -40,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return mixColors(parts);
   };
 
-  const checkDistance = (targetColor, mixedColor) => {
+  const getDistance = (targetColor, mixedColor) => {
     const distance = Math.sqrt(
       Math.pow(targetColor[0] - mixedColor[0], 2) +
         Math.pow(targetColor[1] - mixedColor[1], 2) +
@@ -71,42 +70,77 @@ document.addEventListener("DOMContentLoaded", function () {
     return [...colors, color];
   };
 
-  const resetElements = () => {
-    currentColors = [];
-    currentColorValue = null;
+  const updateState = (state, update) => ({
+    ...state,
+    currentColor: null,
+    currentMixedColors: [],
+    ...(update ? update : {}),
+  });
 
-    resetcontainer.style.visibility = "hidden";
+  const updateUI = (state) => {
+    resetcontainer.style.visibility = state.currentColor ? "visible" : "hidden";
+
+    mixedColor.style.backgroundColor = state.currentColor
+      ? rgbToString(state.currentColor)
+      : "white";
+
+    levelNumber.textContent = `Level ${state.currentLevel}`;
+
+    targetColor.style.backgroundColor = rgbToString(state.targetColor);
 
     document.querySelectorAll("[data-color]").forEach((element) => {
-      window[`${element.dataset.color}Dot`].style.transform = "scale(0)";
+      const color = element.dataset.color;
+
+      window[`${color}Dot`].style.transform = `scale(${Math.min(
+        MAXIMUM_DOT_SCALE,
+        state.currentMixedColors.reduce(
+          (acc, curr) =>
+            BASE_COLORS[color].join() === curr.join() ? acc + 1 : acc,
+          0
+        )
+      )})`;
     });
 
-    mixedColor.style.backgroundColor = "white";
+    return state;
   };
 
-  const newRound = (round) => {
-    resetElements();
+  const initializeGame = (state) => {
+    document.querySelectorAll("[data-color]").forEach((element) => {
+      const color = element.dataset.color;
+      const rgb = BASE_COLORS[color];
 
-    levelNumber.textContent = `Level ${round}`;
+      if (!rgb) return;
 
-    targetColorValue = createColor(BASE_COLORS, round + 1);
-    targetColor.style.backgroundColor = rgbToString(targetColorValue);
+      element.previousElementSibling.style.backgroundColor = rgbToString(rgb);
+    });
+
+    return newRound(state);
+  };
+
+  const newRound = (state) => {
+    const targetColor = createColor(BASE_COLORS, state.currentLevel);
+
+    return updateUI(updateState(state, { targetColor }));
   };
 
   const getElementScale = (element) => {
-    return element.style.transform.match(/scale\(([\d\.]+)\)/)?.at(1) ?? 1;
+    return parseFloat(
+      element.style.transform.match(/scale\(([\d\.]+)\)/)?.at(1) ?? 1
+    );
   };
 
   // LISTENERS
 
-  reset.addEventListener("click", resetElements);
+  reset.addEventListener("click", () => {
+    state = updateUI(updateState(state));
+  });
 
   check.addEventListener("click", () => {
-    if (currentColors.length === 0) return;
+    if (state.currentMixedColors.length === 0) return;
 
-    const closenessPercentage = checkDistance(
-      targetColorValue,
-      currentColorValue
+    const closenessPercentage = getDistance(
+      state.targetColor,
+      state.currentColor
     );
 
     nextColor.style.display = closenessPercentage >= 99 ? "inline" : "none";
@@ -115,36 +149,38 @@ document.addEventListener("DOMContentLoaded", function () {
     dialog.showModal();
   });
 
-  tryAgain.addEventListener("click", resetElements);
+  tryAgain.addEventListener("click", () => {
+    state = updateUI(updateState(state));
+  });
 
   changeColor.addEventListener("click", () => {
-    newRound(currentLevel);
+    state = newRound(updateState(state));
   });
 
   nextColor.addEventListener("click", () => {
-    newRound(++currentLevel);
+    state = newRound(
+      updateState(state, { currentLevel: state.currentLevel + 1 })
+    );
   });
 
   document.querySelectorAll("[data-color]").forEach((element) =>
     element.addEventListener("click", (event) => {
       const color = event.target.dataset.color;
-      const $dot = window[`${color}Dot`];
-      const scale = getElementScale($dot);
 
-      $dot.style.transform = `scale(${Math.max(
-        1,
-        Math.min(10, scale * 1.25)
-      )})`;
+      const mixedColors = addColor(
+        state.currentMixedColors,
+        BASE_COLORS[color]
+      );
+      const mixedColor = mixColors(mixedColors);
 
-      currentColors = addColor(currentColors, BASE_COLORS[color]);
-
-      currentColorValue = mixColors(currentColors);
-      mixedColor.style.backgroundColor = rgbToString(currentColorValue);
-
-      resetcontainer.style.visibility =
-        currentColors.length > 0 ? "visible" : "hidden";
+      state = updateUI(
+        updateState(state, {
+          currentColor: mixedColor,
+          currentMixedColors: mixedColors,
+        })
+      );
     })
   );
 
-  newRound(currentLevel);
+  state = initializeGame(state);
 });
