@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const newRound = (state) => {
     let targetColor;
     do {
-      targetColor = createColor(BASE_COLORS, state.currentLevel);
+      targetColor = createColor(BASE_COLORS, state.currentLevel + 1);
     } while (targetColor.join() === state.targetColor?.join());
 
     return updateUI(updateState(state, { targetColor }));
