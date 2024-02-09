@@ -29,13 +29,20 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const createColor = (colors, partsCount) => {
-    const parts = Array.from({ length: partsCount }, () =>
-      getColorPart(
-        colors,
-        Math.floor(Math.random() * Object.keys(colors).length)
-      )
-    );
+    let lastColor = null;
+    const parts = Array.from({ length: partsCount }, () => {
+      let color;
+      do {
+        color = getColorPart(
+          colors,
+          Math.floor(Math.random() * Object.keys(colors).length)
+        );
+      } while (color === lastColor);
+      lastColor = color;
+      return color;
+    });
 
+    console.log(parts);
     return mixColors(parts);
   };
 
