@@ -50,20 +50,87 @@ document.addEventListener("DOMContentLoaded", function () {
     return 100 - (distance / maxDistance) * 100;
   };
 
-  const getMessageByDistance = (closenessPercentage) => {
+  const getOptionsByCloseness = (closenessPercentage) => {
     if (closenessPercentage >= 100) {
-      return "Correct mix!";
+      return {
+        buttons: [nextColor],
+        titles: [
+          "Color Perfection Achieved!",
+          "Master Mixer!",
+          "Palette Pro!",
+          "Ultimate Color Wizardry!",
+          "Excellent Match!",
+        ],
+        messages: [
+          "100% correct mix!",
+          "Perfect 100% match!",
+          "You nailed the mix!",
+          "Great job on the mix!",
+          "Excellent mix!",
+        ],
+      };
+    } else if (closenessPercentage >= 99) {
+      return {
+        buttons: [tryAgain, changeColor, nextColor],
+        titles: [
+          "Color Brilliance!",
+          "So close!",
+          "Near Perfection!",
+          "One Step from Perfect",
+          "Touch-Up or Level Up?",
+        ],
+        messages: [
+          `You're just a shade away from perfection! ${closenessPercentage.toFixed(
+            2
+          )}% color match.`,
+          `You've almost mastered the art of color mixing with a ${closenessPercentage.toFixed(
+            2
+          )}% match! Proceed or perfect your blend?`,
+          `You've achieved a ${closenessPercentage.toFixed(
+            2
+          )}% color match! Ready to level up, or will you aim for absolute perfection?`,
+          `You're on the brink of perfection with a ${closenessPercentage.toFixed(
+            2
+          )}% match. Do you dare to try for 100% or move on to new challenges?`,
+          `Your palette prowess has earned you a ${closenessPercentage.toFixed(
+            2
+          )}% match. Opt for perfection or embrace the next level of color exploration?`,
+        ],
+      };
+    } else {
+      return {
+        buttons: [tryAgain, changeColor],
+        titles: [
+          "Keep Mixing",
+          "Close, But Not Quite",
+          "Almost There",
+          "Aim Higher!",
+          "Brush Up Your Mix",
+        ],
+        messages: [
+          `You've achieved a ${closenessPercentage.toFixed(
+            2
+          )}% match! Your color intuition is strong, but the perfect hue is still ahead. Mix again for a closer match.`,
+          `With a ${closenessPercentage.toFixed(
+            2
+          )}% color match, you're on the verge of brilliance. Adjust your mix for that flawless finish.`,
+          `You've blended a ${closenessPercentage.toFixed(
+            2
+          )}% match, showing promising skill. A little tweak could lead you to perfection. Give it another try!`,
+          `Your artistic eye has earned you a ${closenessPercentage.toFixed(
+            2
+          )}% color match. Refine your blend to capture that elusive 100%.`,
+          `A ${closenessPercentage.toFixed(
+            2
+          )}% match is impressive, but perfection awaits. Dive back into your palette and unveil the true artist within.`,
+        ],
+      };
     }
+  };
 
-    if (closenessPercentage >= 99) {
-      return `Almost! You are ${closenessPercentage.toFixed(
-        2
-      )}% close. Try again!`;
-    }
-
-    return `Incorrect mix. You are ${closenessPercentage.toFixed(
-      2
-    )}% close. Try again!`;
+  const getRandomOption = (options) => {
+    const randomIndex = Math.floor(Math.random() * options.length);
+    return options[randomIndex];
   };
 
   const addColor = (colors, color) => {
@@ -143,8 +210,15 @@ document.addEventListener("DOMContentLoaded", function () {
       state.currentColor
     );
 
-    nextColor.style.display = closenessPercentage >= 99 ? "inline" : "none";
-    message.textContent = getMessageByDistance(closenessPercentage);
+    const options = getOptionsByCloseness(closenessPercentage);
+
+    [nextColor, changeColor, tryAgain].forEach((button) => {
+      button.style.display = options.buttons.includes(button)
+        ? "inline"
+        : "none";
+    });
+    title.textContent = getRandomOption(options.titles);
+    message.textContent = getRandomOption(options.messages);
 
     dialog.showModal();
   });
