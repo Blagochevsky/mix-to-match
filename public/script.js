@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     mixedColor.style.backgroundColor = state.currentColor
       ? rgbToString(state.currentColor)
-      : "white";
+      : "#e9e4dd";
 
     levelNumber.textContent = `Level ${state.currentLevel}`;
 
