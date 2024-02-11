@@ -1,6 +1,6 @@
 const BASE_COLORS = {
   red: [211, 31, 53],
-  blue: [44, 52, 128],
+  blue: [5, 79, 150],
   yellow: [252, 215, 0],
   white: [255, 255, 255],
 };
