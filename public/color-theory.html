@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Color Theory - ColorMixerChallenge</title>
     <meta
@@ -7,7 +7,41 @@
       content="Learn about the basics of color theory, including the color wheel, primary colors, secondary colors, and complementary colors."
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://colormixerchallenge.com/index.html" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon-120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="favicon-144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="favicon-152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png" />
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyAtkOxa2cVGfesW4sPclEa3NXzw4BGHOv8",
+        authDomain: "mix-to-match.firebaseapp.com",
+        projectId: "mix-to-match",
+        storageBucket: "mix-to-match.appspot.com",
+        messagingSenderId: "764936896866",
+        appId: "1:764936896866:web:05bdfc580487fef3e4ac3b",
+        measurementId: "G-5GQPRSR6QK",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
   </head>
   <body>
     <main id="article">
@@ -44,14 +78,14 @@
           <figure>
             <img
               src="color-wheel-newton.jpg"
-              alt="Colour wheel from Newton’s Opticks (2nd ed., 1718)"
+              alt="Color wheel from Newton’s Opticks (2nd ed., 1718)"
               width="300"
               height="300"
             />
             <figcaption>
               <a
                 href="https://www.newtonproject.ox.ac.uk/view/texts/normalized/NATP00034"
-                >Colour wheel from Newton’s Opticks (1718)</a
+                >Color wheel from Newton’s Opticks (1718)</a
               >
             </figcaption>
           </figure>
@@ -140,11 +174,14 @@
             and design applications.
           </p>
           <figure>
-            <img src="color-wheel-itten.svg" alt="Color Wheel Itten" />
+            <img
+              src="color-wheel-itten.svg"
+              alt="Color wheel from Johannes Itten's The Art of Color (1973)"
+            />
             <figcaption>
               <a
                 href="https://archive.org/details/johannes-ittens-the-art-of-color/page/35/mode/2up"
-                >Colour wheel from Johannes Itten's The Art of Color (1973)</a
+                >Color wheel from Johannes Itten's The Art of Color (1973)</a
               >
             </figcaption>
           </figure>
