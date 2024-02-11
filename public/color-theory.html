@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Color Theory - ColorMixerChallenge</title>
+    <meta
+      name="description"
+      content="Learn about the basics of color theory, including the color wheel, primary colors, secondary colors, and complementary colors."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="article">
+      <article>
+        <header>
+          <nav>
+            <a href="index.html">🎨 Play Color Mixing Game</a>
+          </nav>
+          <h1>Understanding the Color Wheel and Color Theory</h1>
+          <p>
+            In the realm of art and design, colors are far more than mere
+            decorative elements. They are a language of their own, capable of
+            influencing mood, conveying messages, and creating profound
+            aesthetic experiences. At the heart of this colorful language lies
+            the color wheel, a fundamental tool that helps us understand the
+            relationships between different hues. This article delves into the
+            intricacies of the color wheel and the foundational principles of
+            color theory, offering insights into their application in various
+            creative fields.
+          </p>
+        </header>
+
+        <section>
+          <h2>The Genesis of the Color Wheel</h2>
+          <p>
+            The color wheel is a circular diagram that represents the spectrum
+            of colors visible to the human eye. It organizes hues in a coherent
+            and visually logical manner, allowing for easy comprehension of
+            their relationships. The concept dates back to the 17th century when
+            Sir Isaac Newton first arranged the color spectrum in a circle.
+            Since then, the color wheel has evolved, becoming an indispensable
+            tool for artists, designers, and anyone involved in color selection.
+          </p>
+          <figure>
+            <img
+              src="color-wheel-newton.jpg"
+              alt="Colour wheel from Newton’s Opticks (2nd ed., 1718)"
+              width="300"
+              height="300"
+            />
+            <figcaption>
+              <a
+                href="https://www.newtonproject.ox.ac.uk/view/texts/normalized/NATP00034"
+                >Colour wheel from Newton’s Opticks (1718)</a
+              >
+            </figcaption>
+          </figure>
+          <h3>Primary Colors</h3>
+          <p>
+            Red, blue, and yellow form the trio of primary colors. These are the
+            foundational colors that cannot be created through the mixing of
+            other hues.
+          </p>
+          <figure>
+            <svg width="100%" height="auto" viewBox="0 0 400 100">
+              <circle cx="12.5%" cy="50%" r="17%" fill="rgb(211, 31, 53)" />
+              <circle cx="50%" cy="50%" r="17%" fill="rgb(5, 79, 150)" />
+              <circle cx="87.5%" cy="50%" r="17%" fill="rgb(252, 215, 0)" />
+            </svg>
+          </figure>
+          <h3>Secondary Colors</h3>
+          <p>
+            When you mix two primary colors in equal measure, you get a
+            secondary color. These include orange (red + yellow), purple (red +
+            blue), and green (blue + yellow).
+          </p>
+          <figure>
+            <svg width="100%" height="auto" viewBox="0 0 400 100">
+              <defs>
+                <clipPath id="cut-off">
+                  <circle class="movingDot" cx="12.5%" cy="50%" r="17%" />
+                  <circle class="movingDot" cx="50%" cy="50%" r="17%" />
+                  <circle class="movingDot" cx="87.5%" cy="50%" r="17%" />
+                </clipPath>
+              </defs>
+              <circle cx="12.5%" cy="50%" r="17%" fill="rgb(211, 31, 53)" />
+              <circle cx="50%" cy="50%" r="17%" fill="rgb(5, 79, 150)" />
+              <circle cx="87.5%" cy="50%" r="17%" fill="rgb(252, 215, 0)" />
+              <circle
+                class="movingDot"
+                cx="12.5%"
+                cy="50%"
+                r="17%"
+                fill="rgb(252, 215, 0)"
+              />
+              <circle
+                class="movingDot"
+                cx="50%"
+                cy="50%"
+                r="17%"
+                fill="rgb(211, 31, 53)"
+              />
+              <circle
+                class="movingDot"
+                cx="87.5%"
+                cy="50%"
+                r="17%"
+                fill="rgb(5, 79, 150)"
+              />
+              <circle
+                cx="12.5%"
+                cy="50%"
+                r="17%"
+                fill="rgb(252, 91, 42)"
+                clip-path="url(#cut-off)"
+              />
+              <circle
+                cx="50%"
+                cy="50%"
+                r="17%"
+                fill="rgb(100, 35, 101)"
+                clip-path="url(#cut-off)"
+              />
+              <circle
+                cx="87.5%"
+                cy="50%"
+                r="17%"
+                fill="rgb(60, 157, 59)"
+                clip-path="url(#cut-off)"
+              />
+            </svg>
+          </figure>
+          <h3>Color Wheel Evolution</h3>
+          <p>
+            Incorporating primary, secondary, and tertiary colors—the latter
+            resulting from mixing a primary color with an adjacent secondary
+            color—enables the creation of a modern and more or less complete
+            color wheel. This refined version, inspired by Johannes Itten's
+            theories, offers a broader and more nuanced spectrum for artistic
+            and design applications.
+          </p>
+          <figure>
+            <img src="color-wheel-itten.svg" alt="Color Wheel Itten" />
+            <figcaption>
+              <a
+                href="https://archive.org/details/johannes-ittens-the-art-of-color/page/35/mode/2up"
+                >Colour wheel from Johannes Itten's The Art of Color (1973)</a
+              >
+            </figcaption>
+          </figure>
+        </section>
+
+        <footer>
+          <p style="font-size: 3em">↓</p>
+          <nav>
+            <a href="index.html">🎨 Test Your Color Mixing Skills</a>
+          </nav>
+        </footer>
+      </article>
+    </main>
+  </body>
+</html>

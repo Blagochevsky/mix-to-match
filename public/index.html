@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Color Mixing Game</title>
+    <title>Color Mixing Game | ColorMixerChallenge</title>
+    <meta name="description" content="ColorMixerChallenge is an engaging and educational game that challenges you to mix colors to match a target color. Improve your color theory knowledge while having fun!">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <link rel="canonical" href="http://www.colormixerchallenge.com/index.html" />
     <link rel="stylesheet" href="styles.css" />
     <script src="mixbox.js"></script>
     <script type="module">
@@ -31,24 +34,15 @@
   </head>
 
   <body>
-    <div id="app">
-      <dialog id="dialog">
-        <h1 id="title"></h1>
-        <p id="message"></p>
-
-        <form method="dialog">
-          <button id="tryAgain">Try Again</button>
-          <button id="changeColor">Try Another Color</button>
-          <br />
-          <button id="nextColor">Next Level</button>
-        </form>
-      </dialog>
-
-      <div id="headercontainer">
+    <main id="app">
+      <header>
+        <nav>
+          <a href="color-theory.html">🙋 Learn about Color Theory</a>
+        </nav>
         <h1>Mix to Match</h1>
         <p>Can You Create the Exact Color?</p>
         <p id="levelNumber">Level 1</p>
-      </div>
+      </header>
 
       <div id="colorscontainer">
         <div id="targetColor"></div>
@@ -57,7 +51,6 @@
 
       <div id="resetcontainer">
         <button id="reset">Clear</button>
-
         <button id="check">Check</button>
       </div>
 
@@ -92,6 +85,17 @@
       </div>
 
       <script src="script.js"></script>
-    </div>
+    </main>
+    <dialog id="dialog">
+      <h2 id="title"></h1>
+      <p id="message"></p>
+
+      <form method="dialog">
+        <button id="tryAgain">Try Again</button>
+        <button id="changeColor">Try Another Color</button>
+        <br />
+        <button id="nextColor">Next Level</button>
+      </form>
+    </dialog>
   </body>
 </html>
