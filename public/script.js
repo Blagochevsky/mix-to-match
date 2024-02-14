@@ -1,3 +1,4 @@
+const CANVAS_COLOR = [233, 228, 221];
 const BASE_COLORS = {
   red: [211, 31, 53],
   blue: [44, 52, 128],
@@ -19,6 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const rgbToString = (color) => `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
   const mixColors = (colors) => {
+    if (colors.length === 0) return CANVAS_COLOR;
+
     const mix = Array.from({ length: colors.length }, (_, i) =>
       mixbox.rgbToLatent(colors[i])
     )
@@ -143,6 +146,13 @@ document.addEventListener("DOMContentLoaded", function () {
     return [...colors, color];
   };
 
+  const removeColor = (colors, color) => {
+    const idx = colors.findIndex((item) => item.join() === color.join());
+
+    if (idx === -1) return [...colors];
+    return colors.filter((_, index) => index !== idx);
+  };
+
   const updateState = (state, update) => ({
     ...state,
     currentColor: null,
@@ -241,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   });
 
-  document.querySelectorAll("[data-color]").forEach((element) =>
+  document.querySelectorAll("[data-color]").forEach((element) => {
     element.addEventListener("click", (event) => {
       const color = event.target.dataset.color;
 
@@ -257,8 +267,27 @@ document.addEventListener("DOMContentLoaded", function () {
           currentMixedColors: mixedColors,
         })
       );
-    })
-  );
+    });
+
+    element.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+
+      const color = event.target.dataset.color;
+
+      const mixedColors = removeColor(
+        state.currentMixedColors,
+        BASE_COLORS[color]
+      );
+      const mixedColor = mixColors(mixedColors);
+
+      state = updateUI(
+        updateState(state, {
+          currentColor: mixedColor,
+          currentMixedColors: mixedColors,
+        })
+      );
+    });
+  });
 
   state = initializeGame(state);
 });
