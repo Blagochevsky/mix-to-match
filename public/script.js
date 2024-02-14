@@ -200,12 +200,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return updateUI(updateState(state, { targetColor }));
   };
 
-  const getElementScale = (element) => {
-    return parseFloat(
-      element.style.transform.match(/scale\(([\d\.]+)\)/)?.at(1) ?? 1
-    );
-  };
-
   // LISTENERS
 
   reset.addEventListener("click", () => {
