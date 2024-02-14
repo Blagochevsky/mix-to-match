@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
     currentColor: null,
     currentMixedColors: [],
     currentLevel: 1,
+    totalCloseness: 0,
+    attempts: 0,
   };
 
   const getColorPart = (colors, seed) => colors[Object.keys(colors).at(seed)];
@@ -168,6 +170,11 @@ document.addEventListener("DOMContentLoaded", function () {
       : "#e9e4dd";
 
     levelNumber.textContent = `Level ${state.currentLevel}`;
+    totalCloseness.textContent = `Accuracy ${
+      state.attempts === 0
+        ? "100.00"
+        : (state.totalCloseness / state.attempts).toFixed(2)
+    }%`;
 
     targetColor.style.backgroundColor = rgbToString(state.targetColor);
 
@@ -223,6 +230,9 @@ document.addEventListener("DOMContentLoaded", function () {
       state.targetColor,
       state.currentColor
     );
+
+    state.totalCloseness += closenessPercentage; // Add this line
+    state.attempts += 1; // Add this line
 
     const options = getOptionsByCloseness(closenessPercentage);
 
