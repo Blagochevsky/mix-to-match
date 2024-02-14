@@ -42,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return color;
     });
 
-    console.log(parts);
     return mixColors(parts);
   };
 
