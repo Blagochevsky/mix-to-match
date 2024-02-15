@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     currentLevel: 1,
     totalCloseness: 0,
     attempts: 0,
+    playerHealth: 5,
   };
 
   const getColorPart = (colors, seed) => colors[Object.keys(colors).at(seed)];
@@ -62,9 +63,10 @@ document.addEventListener("DOMContentLoaded", function () {
     return 100 - (distance / maxDistance) * 100;
   };
 
-  const getOptions = (closenessPercentage, optimalParts) => {
+  const getOptions = (closenessPercentage, optimalParts, playerHealth) => {
     if (closenessPercentage >= 100 && optimalParts) {
       return {
+        win: true,
         buttons: [nextColor],
         titles: [
           "⭐️⭐️⭐️ Efficiency Maestro!",
@@ -83,6 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     } else if (closenessPercentage >= 100) {
       return {
+        win: true,
         buttons: [tryAgain, changeColor, nextColor],
         titles: [
           "⭐️⭐️ Color Perfection Achieved!",
@@ -101,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     } else if (closenessPercentage >= 99) {
       return {
+        win: true,
         buttons: [tryAgain, changeColor, nextColor],
         titles: [
           "⭐️ Color Brilliance!",
@@ -127,8 +131,20 @@ document.addEventListener("DOMContentLoaded", function () {
           )}% match. Opt for perfection or embrace the next level of color exploration?`,
         ],
       };
+    } else if (playerHealth <= 1) {
+      return {
+        win: false,
+        buttons: [startOver],
+        titles: ["✖️ Game Over"],
+        messages: [
+          `You've achieved a ${closenessPercentage.toFixed(
+            2
+          )}% match! And you've run out of brushes.`,
+        ],
+      };
     } else {
       return {
+        win: false,
         buttons: [tryAgain, changeColor],
         titles: [
           "✖️ Keep Mixing",
@@ -194,6 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ? "100.00"
         : (state.totalCloseness / state.attempts).toFixed(2)
     }%`;
+    playerHealth.textContent = "Brushes " + "🖌️".repeat(state.playerHealth);
 
     targetColor.style.backgroundColor = rgbToString(state.targetColor);
 
@@ -255,12 +272,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const optimalParts =
       state.currentMixColors.length <= state.targetMixColors.length;
 
-    const options = getOptions(closenessPercentage, optimalParts);
+    const options = getOptions(
+      closenessPercentage,
+      optimalParts,
+      state.playerHealth
+    );
+
+    if (!options.win) {
+      state.playerHealth -= 1;
+    }
 
     state.totalCloseness += closenessPercentage;
     state.attempts += 1;
 
-    [nextColor, changeColor, tryAgain].forEach((button) => {
+    [nextColor, changeColor, tryAgain, startOver].forEach((button) => {
       button.style.display = options.buttons.includes(button)
         ? "inline"
         : "none";
@@ -283,6 +308,20 @@ document.addEventListener("DOMContentLoaded", function () {
     state = newRound(
       updateState(state, { currentLevel: state.currentLevel + 1 })
     );
+  });
+
+  startOver.addEventListener("click", () => {
+    state = {
+      targetColor: null,
+      targetMixColors: [],
+      currentColor: null,
+      currentMixColors: [],
+      currentLevel: 1,
+      totalCloseness: 0,
+      attempts: 0,
+      playerHealth: 5,
+    };
+    state = initializeGame(state);
   });
 
   document.querySelectorAll("[data-color]").forEach((element) => {
