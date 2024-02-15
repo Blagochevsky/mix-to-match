@@ -190,12 +190,21 @@ document.addEventListener("DOMContentLoaded", function () {
     return colors.filter((_, index) => index !== idx);
   };
 
-  const updateState = (state, update) => ({
-    ...state,
-    currentColor: null,
-    currentMixColors: [],
-    ...(update ? update : {}),
-  });
+  const updateState = (state, update) => {
+    const newState = {
+      ...state,
+      ...(update ? update : {}),
+    };
+
+    return newState;
+  };
+
+  const recordState = (state) => {
+    localStorage.setItem("state", JSON.stringify(state));
+    return { ...state };
+  };
+
+  const restoreState = () => JSON.parse(localStorage.getItem("state")) ?? {};
 
   const updateUI = (state) => {
     resetcontainer.style.visibility = state.currentColor ? "visible" : "hidden";
@@ -241,7 +250,8 @@ document.addEventListener("DOMContentLoaded", function () {
         rgbToString(rgb);
     });
 
-    return newRound(state);
+    const restoredState = restoreState();
+    return newRound({ ...state, ...restoredState });
   };
 
   const newRound = (state) => {
@@ -252,13 +262,19 @@ document.addEventListener("DOMContentLoaded", function () {
       targetMixColors = result.parts;
     } while (targetColor.join() === state.targetColor?.join());
 
-    return updateUI(updateState(state, { targetColor, targetMixColors }));
+    return updateUI(
+      recordState(updateState(state, { targetColor, targetMixColors }))
+    );
   };
 
   // LISTENERS
 
   reset.addEventListener("click", () => {
-    state = updateUI(updateState(state));
+    state = updateUI(
+      recordState(
+        updateState(state, { currentColor: null, currentMixColors: [] })
+      )
+    );
   });
 
   check.addEventListener("click", () => {
@@ -297,16 +313,30 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   tryAgain.addEventListener("click", () => {
-    state = updateUI(updateState(state));
+    state = updateUI(
+      recordState(
+        updateState(state, { currentColor: null, currentMixColors: [] })
+      )
+    );
   });
 
   changeColor.addEventListener("click", () => {
-    state = newRound(updateState(state));
+    state = newRound(
+      recordState(
+        updateState(state, { currentColor: null, currentMixColors: [] })
+      )
+    );
   });
 
   nextColor.addEventListener("click", () => {
     state = newRound(
-      updateState(state, { currentLevel: state.currentLevel + 1 })
+      recordState(
+        updateState(state, {
+          currentLevel: state.currentLevel + 1,
+          currentColor: null,
+          currentMixColors: [],
+        })
+      )
     );
   });
 
@@ -321,7 +351,7 @@ document.addEventListener("DOMContentLoaded", function () {
       attempts: 0,
       playerHealth: 5,
     };
-    state = initializeGame(state);
+    state = initializeGame(recordState(state));
   });
 
   document.querySelectorAll("[data-color]").forEach((element) => {
@@ -332,10 +362,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const mixedColor = mixColors(mixedColors);
 
       state = updateUI(
-        updateState(state, {
-          currentColor: mixedColor,
-          currentMixColors: mixedColors,
-        })
+        recordState(
+          updateState(state, {
+            currentColor: mixedColor,
+            currentMixColors: mixedColors,
+          })
+        )
       );
     });
 
@@ -351,10 +383,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const mixedColor = mixColors(mixedColors);
 
       state = updateUI(
-        updateState(state, {
-          currentColor: mixedColor,
-          currentMixColors: mixedColors,
-        })
+        recordState(
+          updateState(state, {
+            currentColor: mixedColor,
+            currentMixColors: mixedColors,
+          })
+        )
       );
     });
   });
