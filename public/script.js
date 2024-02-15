@@ -251,10 +251,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const restoredState = restoreState();
-    if (Object.keys(restoredState).length === 0) {
-      return newRound({ ...state, ...restoredState });
-    } else {
+    if (restoredState.targetColor) {
       return updateUI({ ...state, ...restoredState });
+    } else {
+      return newRound({ ...state, ...restoredState });
     }
   };
 
