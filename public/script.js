@@ -306,6 +306,8 @@ document.addEventListener("DOMContentLoaded", function () {
             : state.playerHealth - 1,
           totalCloseness: state.totalCloseness + closenessPercentage,
           attempts: state.attempts + 1,
+          currentColor: null,
+          currentMixColors: [],
         })
       )
     );
