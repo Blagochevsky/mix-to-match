@@ -298,12 +298,19 @@ document.addEventListener("DOMContentLoaded", function () {
       state.playerHealth
     );
 
-    if (!options.win) {
-      state.playerHealth -= 1;
-    }
-
-    state.totalCloseness += closenessPercentage;
-    state.attempts += 1;
+    state = updateUI(
+      recordState(
+        updateState(state, {
+          playerHealth: options.win
+            ? state.playerHealth
+            : state.playerHealth - 1,
+          totalCloseness: state.totalCloseness + closenessPercentage,
+          attempts: state.attempts + 1,
+          currentColor: null,
+          currentMixColors: [],
+        })
+      )
+    );
 
     [nextColor, changeColor, tryAgain, startOver].forEach((button) => {
       button.style.display = options.buttons.includes(button)
