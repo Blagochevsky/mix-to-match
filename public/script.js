@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {
       )
     );
 
-    [(nextColor, changeColor, tryAgain, startOver)].forEach((button) => {
+    [nextColor, changeColor, tryAgain, startOver].forEach((button) => {
       button.style.display = options.buttons.includes(button)
         ? "inline"
         : "none";
