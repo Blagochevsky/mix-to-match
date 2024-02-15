@@ -251,7 +251,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const restoredState = restoreState();
-    return newRound({ ...state, ...restoredState });
+    if (Object.keys(restoredState).length === 0) {
+      return newRound({ ...state, ...restoredState });
+    } else {
+      return updateUI({ ...state, ...restoredState });
+    }
   };
 
   const newRound = (state) => {
