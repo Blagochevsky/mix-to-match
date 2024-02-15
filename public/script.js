@@ -214,12 +214,12 @@ document.addEventListener("DOMContentLoaded", function () {
       : "#e9e4dd";
 
     levelNumber.textContent = `Level ${state.currentLevel}`;
-    totalCloseness.textContent = `Accuracy ${
-      state.attempts === 0
-        ? "100.00"
-        : (state.totalCloseness / state.attempts).toFixed(2)
-    }%`;
-    playerHealth.textContent = "Brushes " + "🖌️".repeat(state.playerHealth);
+    // totalCloseness.textContent = `Accuracy ${
+    //   state.attempts === 0
+    //     ? "100.00"
+    //     : (state.totalCloseness / state.attempts).toFixed(2)
+    // }%`;
+    playerHealth.textContent = "🖌️".repeat(state.playerHealth) + " Brushes ";
 
     targetColor.style.backgroundColor = rgbToString(state.targetColor);
 

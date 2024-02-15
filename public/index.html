@@ -47,18 +47,14 @@
   <body>
     <main id="app">
       <header>
-        <nav>
+        <div id="properties">
+          <div id="levelNumber">Level 1</div>
+          <div id="playerHealth">🖌️🖌️🖌️🖌️🖌️ Brushes</div>
+        </div>
+        <h1 class="hide-on-mobile-landscape">Can You Mix the Exact Color?</h1>
+        <nav class="hide-on-mobile-landscape">
           <a href="color-theory.html">🙋 Learn about Color Theory</a>
         </nav>
-        <h1>Mix to Match</h1>
-        <p>Can You Create the Exact Color?</p>
-        <p id="properties">
-          <span id="levelNumber">Level 1</span>
-          <span> — </span>
-          <span id="totalCloseness">Accuracy 100.00%</span>
-          <span> — </span>
-          <span id="playerHealth">Brushes 🖌️🖌️🖌️🖌️🖌️</span>
-        </p>
       </header>
 
       <div id="colorscontainer">
@@ -114,9 +110,9 @@
           <button class="colors" data-color="white" id="whitetube"></button>
         </div>
       </div>
-
       <script src="script.js"></script>
     </main>
+
     <dialog id="dialog">
       <h2 id="title"></h2>
       <p id="message"></p>
