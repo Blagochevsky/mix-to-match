@@ -10,8 +10,9 @@ const MAXIMUM_DOT_SCALE = 80;
 document.addEventListener("DOMContentLoaded", function () {
   let state = {
     targetColor: null,
+    targetMixColors: [],
     currentColor: null,
-    currentMixedColors: [],
+    currentMixColors: [],
     currentLevel: 1,
     totalCloseness: 0,
     attempts: 0,
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return color;
     });
 
-    return mixColors(parts);
+    return { color: mixColors(parts), parts };
   };
 
   const getDistance = (targetColor, mixedColor) => {
@@ -61,16 +62,34 @@ document.addEventListener("DOMContentLoaded", function () {
     return 100 - (distance / maxDistance) * 100;
   };
 
-  const getOptionsByCloseness = (closenessPercentage) => {
-    if (closenessPercentage >= 100) {
+  const getOptions = (closenessPercentage, optimalParts) => {
+    if (closenessPercentage >= 100 && optimalParts) {
       return {
         buttons: [nextColor],
         titles: [
-          "Color Perfection Achieved!",
-          "Master Mixer!",
-          "Palette Pro!",
-          "Ultimate Color Wizardry!",
-          "Excellent Match!",
+          "⭐️⭐️⭐️ Efficiency Maestro!",
+          "⭐️⭐️⭐️ Step-Savvy Virtuoso!",
+          "⭐️⭐️⭐️ Precision Pioneer!",
+          "⭐️⭐️⭐️ Optimal Artist!",
+          "⭐️⭐️⭐️ Master of Minimality!",
+        ],
+        messages: [
+          "Perfection with just the essentials—brilliant!",
+          "Pure genius in minimal strokes!",
+          "Artistry in economy—every part perfect!",
+          "Minimalist mastery for the perfect blend!",
+          "Elegance in simplicity—color perfection!",
+        ],
+      };
+    } else if (closenessPercentage >= 100) {
+      return {
+        buttons: [tryAgain, changeColor, nextColor],
+        titles: [
+          "⭐️⭐️ Color Perfection Achieved!",
+          "⭐️⭐️ Master Mixer!",
+          "⭐️⭐️ Palette Pro!",
+          "⭐️⭐️ Ultimate Color Wizardry!",
+          "⭐️⭐️ Excellent Match!",
         ],
         messages: [
           "100% correct mix!",
@@ -84,11 +103,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return {
         buttons: [tryAgain, changeColor, nextColor],
         titles: [
-          "Color Brilliance!",
-          "So close!",
-          "Near Perfection!",
-          "One Step from Perfect",
-          "Touch-Up or Level Up?",
+          "⭐️ Color Brilliance!",
+          "⭐️ So close!",
+          "⭐️ Near Perfection!",
+          "⭐️ One Step from Perfect",
+          "⭐️ Touch-Up or Level Up?",
         ],
         messages: [
           `You're just a shade away from perfection! ${closenessPercentage.toFixed(
@@ -112,11 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return {
         buttons: [tryAgain, changeColor],
         titles: [
-          "Keep Mixing",
-          "Close, But Not Quite",
-          "Almost There",
-          "Aim Higher!",
-          "Brush Up Your Mix",
+          "✖️ Keep Mixing",
+          "✖️ Close, But Not Quite",
+          "✖️ Almost There",
+          "✖️ Aim Higher!",
+          "✖️ Brush Up Your Mix",
         ],
         messages: [
           `You've achieved a ${closenessPercentage.toFixed(
@@ -158,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const updateState = (state, update) => ({
     ...state,
     currentColor: null,
-    currentMixedColors: [],
+    currentMixColors: [],
     ...(update ? update : {}),
   });
 
@@ -183,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       window[`${color}Dot`].style.transform = `scale(${Math.min(
         MAXIMUM_DOT_SCALE,
-        state.currentMixedColors.reduce(
+        state.currentMixColors.reduce(
           (acc, curr) =>
             BASE_COLORS[color].join() === curr.join() ? acc + 1 : acc,
           0
@@ -209,12 +228,14 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const newRound = (state) => {
-    let targetColor;
+    let targetColor, targetMixColors;
     do {
-      targetColor = createColor(BASE_COLORS, state.currentLevel + 1);
+      const result = createColor(BASE_COLORS, state.currentLevel + 1);
+      targetColor = result.color;
+      targetMixColors = result.parts;
     } while (targetColor.join() === state.targetColor?.join());
 
-    return updateUI(updateState(state, { targetColor }));
+    return updateUI(updateState(state, { targetColor, targetMixColors }));
   };
 
   // LISTENERS
@@ -224,17 +245,20 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   check.addEventListener("click", () => {
-    if (state.currentMixedColors.length === 0) return;
+    if (state.currentMixColors.length === 0) return;
 
     const closenessPercentage = getDistance(
       state.targetColor,
       state.currentColor
     );
 
-    state.totalCloseness += closenessPercentage; // Add this line
-    state.attempts += 1; // Add this line
+    const optimalParts =
+      state.currentMixColors.length <= state.targetMixColors.length;
 
-    const options = getOptionsByCloseness(closenessPercentage);
+    const options = getOptions(closenessPercentage, optimalParts);
+
+    state.totalCloseness += closenessPercentage;
+    state.attempts += 1;
 
     [nextColor, changeColor, tryAgain].forEach((button) => {
       button.style.display = options.buttons.includes(button)
@@ -265,16 +289,13 @@ document.addEventListener("DOMContentLoaded", function () {
     element.addEventListener("click", (event) => {
       const color = event.target.dataset.color;
 
-      const mixedColors = addColor(
-        state.currentMixedColors,
-        BASE_COLORS[color]
-      );
+      const mixedColors = addColor(state.currentMixColors, BASE_COLORS[color]);
       const mixedColor = mixColors(mixedColors);
 
       state = updateUI(
         updateState(state, {
           currentColor: mixedColor,
-          currentMixedColors: mixedColors,
+          currentMixColors: mixedColors,
         })
       );
     });
@@ -285,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const color = event.target.dataset.color;
 
       const mixedColors = removeColor(
-        state.currentMixedColors,
+        state.currentMixColors,
         BASE_COLORS[color]
       );
       const mixedColor = mixColors(mixedColors);
@@ -293,7 +314,7 @@ document.addEventListener("DOMContentLoaded", function () {
       state = updateUI(
         updateState(state, {
           currentColor: mixedColor,
-          currentMixedColors: mixedColors,
+          currentMixColors: mixedColors,
         })
       );
     });
