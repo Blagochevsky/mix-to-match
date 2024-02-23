@@ -1,11 +1,11 @@
 @font-face {
   font-family: "EB Garamond";
-  src: url("EBGaramond-VariableFont_wght.ttf") format("truetype");
+  src: url("fonts/EBGaramond-VariableFont_wght.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "EB Garamond Italic";
-  src: url("EBGaramond-Italic-VariableFont_wght.ttf") format("truetype");
+  src: url("fonts/EBGaramond-Italic-VariableFont_wght.ttf") format("truetype");
 }
 
 @media screen and (max-width: 932px) and (max-height: 430px) and (orientation: landscape) {
@@ -288,36 +288,36 @@ form>button {
 /* Images */
 
 #whitetube {
-  background-image: url(whitetube.png);
+  background-image: url(images/whitetube.png);
 }
 
 #yellowtube {
-  background-image: url(yellowtube.png);
+  background-image: url(images/yellowtube.png);
 }
 
 #redtube {
-  background-image: url(redtube.png);
+  background-image: url(images/redtube.png);
 }
 
 #bluetube {
-  background-image: url(bluetube.png);
+  background-image: url(images/bluetube.png);
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   #whitetube {
-    background-image: url(whitetube@2x.png);
+    background-image: url(images/whitetube@2x.png);
   }
 
   #yellowtube {
-    background-image: url(yellowtube@2x.png);
+    background-image: url(images/yellowtube@2x.png);
   }
 
   #redtube {
-    background-image: url(redtube@2x.png);
+    background-image: url(images/redtube@2x.png);
   }
 
   #bluetube {
-    background-image: url(bluetube@2x.png);
+    background-image: url(images/bluetube@2x.png);
   }
 }
 
